@@ -136,7 +136,7 @@ const Formbuilder = () => {
     <Wrapper>
       <Form onSubmit={handleSubmit}>
         <Hero>
-          <H1>Faculty Curriculum Vitae</H1>
+          <H1>Department Data Collection for UVCE Website</H1>
           <P>
             for UVCE Website<A href="www.uvce.ac.in">www.uvce.ac.in</A>
           </P>
