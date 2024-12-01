@@ -28,7 +28,6 @@ const Formbuilder = () => {
   const [loading, setloading] = useState(false);
   const [clearEntries, setclearEntries] = useState(false);
   const [clearFile, setclearFile] = useState(false);
-  const [isDisabled, setIsDisabled] = useState(false);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
