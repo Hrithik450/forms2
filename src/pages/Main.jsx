@@ -1,13 +1,14 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Main = () => {
   return (
     <div>
       <button>
-        <a href="/view-form">View Form</a>
+        <Link to="/view-form">View Form</Link>
       </button>
       <button>
-        <a href="/create-form">Create Form</a>
+        <Link to="/create-form">Create Form</Link>
       </button>
     </div>
   );
