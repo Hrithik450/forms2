@@ -1,0 +1,211 @@
+import React, { useState } from "react";
+import styled, { keyframes } from "styled-components";
+import { IoMdArrowRoundBack } from "react-icons/io";
+import { MdOutlineShortText } from "react-icons/md";
+import { IoDocumentAttachOutline } from "react-icons/io5";
+import { TbLogicXnor } from "react-icons/tb";
+import { MdDelete } from "react-icons/md";
+import TypePopUpContent from "./TypePopUp";
+
+const PopUpContent = ({ popUp, handleDelete, data, handlePopUpClose }) => {
+  const [TypePopUp, setTypePopUp] = useState(false);
+
+  const handleTypePopUpOpen = () => {
+    setTypePopUp(true);
+  };
+
+  const handleTypePopUpClose = () => {
+    setTypePopUp(false);
+  };
+
+  return (
+    <PopUp active={popUp}>
+      <BackIcon onClick={handlePopUpClose} />
+      {TypePopUp && (
+        <TypePopUpContent
+          popUp={TypePopUp}
+          handleTypePopUpClose={handleTypePopUpClose}
+        />
+      )}
+      <PopUpInputCont>
+        <Label>{data && data.id}.</Label>
+        <FieldInput type="text" placeholder="Question" />
+      </PopUpInputCont>
+      <FeatContainer>
+        <TypeCont onClick={handleTypePopUpOpen}>
+          <Short />
+          <ReqLabel>Short Answer</ReqLabel>
+        </TypeCont>
+      </FeatContainer>
+      <PopUpBottom>
+        <IconBox>
+          <Attach />
+          <IconLabel>Attach</IconLabel>
+        </IconBox>
+        <IconBox>
+          <Logic />
+          <IconLabel>Logic</IconLabel>
+        </IconBox>
+        <IconBox
+          onClick={() => {
+            handleDelete(data.id);
+            handlePopUpClose();
+          }}
+        >
+          <Delete />
+          <IconLabel>Delete</IconLabel>
+        </IconBox>
+      </PopUpBottom>
+    </PopUp>
+  );
+};
+
+export default PopUpContent;
+
+const PopUp = styled.div`
+  box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, 0.3);
+  background-color: white;
+  position: absolute;
+  left: 50%;
+  height: max-content;
+  width: 35%;
+  padding: 1rem 1rem 1.5rem 1rem;
+  border-radius: 10px;
+  margin: 2rem 0;
+  z-index: 10;
+  transform: translateX(-50%);
+
+  animation: ${(props) => (props.active ? fadeIn : fadeOut)} 0.3s ease-in-out;
+  animation-fill-mode: forwards;
+
+  @media (max-width: 450px) {
+    margin: 1.5rem 0;
+    width: 100%;
+  }
+`;
+
+const Label = styled.label`
+  max-height: max-content;
+`;
+
+const FieldInput = styled.input`
+  max-height: max-content;
+  width: 100%;
+  border: none;
+  outline: none;
+  border-bottom: 2px solid gray;
+
+  &:focus {
+    border-bottom: 2px solid blue;
+  }
+`;
+
+const PopUpInputCont = styled.div`
+  max-height: max-content;
+  display: flex;
+  align-items: center;
+  column-gap: 0.5rem;
+`;
+
+const FeatContainer = styled.div`
+  max-height: max-content;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1.5rem 0;
+`;
+
+const TypeCont = styled.div`
+  max-height: max-content;
+  display: flex;
+  align-items: center;
+  column-gap: 5px;
+`;
+
+const Required = styled.span`
+  max-height: max-content;
+  border-left: 2px solid gray;
+  padding-left: 0.5rem;
+  align-items: center;
+  display: flex;
+  column-gap: 0.5rem;
+`;
+
+const ReqLabel = styled.label`
+  max-height: max-content;
+
+  @media (max-width: 450px) {
+    font-size: 13px;
+  }
+`;
+
+const PopUpBottom = styled.div`
+  max-height: max-content;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  border-top: 1px solid gray;
+  padding-top: 1rem;
+`;
+
+const IconBox = styled.div`
+  flex-basis: 100%;
+  max-height: max-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  &:not(:first-child) {
+    border-left: 1px solid gray;
+  }
+`;
+
+const IconLabel = styled.label`
+  max-height: max-content;
+`;
+
+// Icons
+const BackIcon = styled(IoMdArrowRoundBack)`
+  max-height: max-content;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+`;
+
+const Short = styled(MdOutlineShortText)`
+  max-height: max-content;
+`;
+
+const fadeIn = keyframes`
+from {
+opacity: 0;
+transform: translateX(-50%) scale(0.8)
+} to {
+opacity: 1;
+transform: translateX(-50%) scale(1);
+}`;
+
+const fadeOut = keyframes`
+from {
+opacity: 1;
+transform: translateX(-50%) scale(1);
+} to {
+ opacity: 0;
+ transform: translateX(-50%) scale(0.8);
+}`;
+
+// Icons
+const BaseIcon = styled.div`
+  max-height: max-content;
+`;
+
+const Delete = styled(MdDelete)`
+  ${BaseIcon}
+`;
+
+const Attach = styled(IoDocumentAttachOutline)`
+  ${BaseIcon}
+`;
+
+const Logic = styled(TbLogicXnor)`
+  ${BaseIcon}
+`;

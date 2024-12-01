@@ -5,18 +5,32 @@ import { IoIosCopy } from "react-icons/io";
 import { MdDeleteOutline } from "react-icons/md";
 import { MdOutlineShortText } from "react-icons/md";
 
-const Field = ({ handlePopUpOpen }) => {
+const Field = ({
+  handlePopUpOpen,
+  data,
+  handleCopy,
+  handleDelete,
+  handlePopUpClose,
+}) => {
   return (
     <FieldContainer>
-      <Label onClick={handlePopUpOpen}>1. Name</Label>
+      <Label onClick={() => handlePopUpOpen(data)}>
+        {data && data.id}. Name
+      </Label>
       <FeatContainer>
         <TypeCont>
           <Short />
           <ReqLabel>Short Answer</ReqLabel>
         </TypeCont>
+
         <IconsCont>
-          <Copy />
-          <DeleteIcon />
+          <Copy onClick={handleCopy} />
+          <DeleteIcon
+            onClick={() => {
+              data?.id && handleDelete(data.id);
+              handlePopUpClose();
+            }}
+          />
           <Required>
             <ReqLabel>Required</ReqLabel>
             <ToggleButton />

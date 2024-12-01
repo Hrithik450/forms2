@@ -1,17 +1,17 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import styled from "styled-components";
 
 const ToggleButton = () => {
-  const [istoggled, setistoggled] = useState(false);
+  const [isToggled, setIsToggled] = useState();
 
   const handleToggle = () => {
-    setistoggled(!istoggled);
+    setIsToggled(!isToggled);
   };
 
   return (
     <ToggleContainer>
-      <Toggle istoggled={istoggled} onClick={handleToggle}>
-        <Circle istoggled={istoggled} />
+      <Toggle istoggled={isToggled} onClick={handleToggle}>
+        <Circle istoggled={isToggled} />
       </Toggle>
     </ToggleContainer>
   );

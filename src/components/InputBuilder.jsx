@@ -1,17 +1,34 @@
 import React, { useState } from "react";
-import styled, { keyframes } from "styled-components";
-import { IoMdArrowRoundBack } from "react-icons/io";
+import styled from "styled-components";
 import Field from "./Createform.jsx/Field";
+import PopUpContent from "./Createform.jsx/PopUp";
 
 const InputBuilder = () => {
   const [popUp, setPopUp] = useState(false);
+  const [fields, setfields] = useState([
+    { id: 1, label: "Name", required: true },
+  ]);
+  const [Data, setData] = useState({});
 
-  const handlePopUpOpen = () => {
+  const handlePopUpOpen = (data) => {
     setPopUp(true);
+    setData(data);
   };
 
   const handlePopUpClose = () => {
     setPopUp(false);
+  };
+
+  const handleCopy = () => {
+    setfields((prev) => [...prev, { id: prev.length + 1, label: "Name" }]);
+  };
+
+  const handleDelete = (id) => {
+    setfields((prev) =>
+      prev
+        .filter((field) => field.id != id)
+        .map((field, index) => ({ ...field, id: index + 1 }))
+    );
   };
 
   return (
@@ -29,15 +46,23 @@ const InputBuilder = () => {
         </MetaDataContainer>
         <FormData>
           {popUp && (
-            <PopUp active={popUp}>
-              <BackIcon onClick={handlePopUpClose} />
-            </PopUp>
+            <PopUpContent
+              popUp={popUp}
+              handleDelete={handleDelete}
+              data={Data}
+              handlePopUpClose={handlePopUpClose}
+            />
           )}
-          <Field handlePopUpOpen={handlePopUpOpen} />
-          {/* <FieldContainer onClick={handlePopUpOpen}>Hello World</FieldContainer>
-          <FieldContainer onClick={handlePopUpOpen}>Hello World</FieldContainer>
-          <FieldContainer onClick={handlePopUpOpen}>Hello World</FieldContainer>
-          <FieldContainer onClick={handlePopUpOpen}>Hello World</FieldContainer> */}
+          {fields.map((field, index) => (
+            <Field
+              key={index}
+              handlePopUpOpen={handlePopUpOpen}
+              data={field}
+              handleCopy={handleCopy}
+              handleDelete={handleDelete}
+              handlePopUpClose={handlePopUpClose}
+            />
+          ))}
         </FormData>
       </Form>
     </Wrapper>
@@ -126,48 +151,6 @@ const Input = styled.input`
   }
 `;
 
-const BackIcon = styled(IoMdArrowRoundBack)`
-  max-height: max-content;
-  font-size: 1.5rem;
-`;
-
-const PopUp = styled.div`
-  box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, 0.3);
-  background-color: white;
-  position: absolute;
-  left: 50%;
-  height: 30vh;
-  width: 45%;
-  padding-bottom: 0.5rem;
-  border-radius: 10px;
-  margin: 2rem 0;
-  z-index: 10;
-  transform: translateX(-50%);
-
-  animation: ${(props) => (props.active ? fadeIn : fadeOut)} 0.3s ease-in-out;
-  animation-fill-mode: forwards;
-
-  @media (max-width: 450px) {
-    margin: 1.5rem 0;
-    width: 100%;
-  }
-`;
-
 // Animations
-const fadeIn = keyframes`
-from {
-opacity: 0;
-transform: translateX(-50%) scale(0.8)
-} to {
-opacity: 1;
-transform: translateX(-50%) scale(1);
-}`;
 
-const fadeOut = keyframes`
-from {
-opacity: 1;
-transform: translateX(-50%) scale(1);
-} to {
- opacity: 0;
- transform: translateX(-50%) scale(0.8);
-}`;
+// Icons
