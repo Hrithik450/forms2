@@ -84,7 +84,7 @@ const PopUp = styled.div`
   background-color: white;
   position: absolute;
   left: 50%;
-  top: 50%;
+  top: 40%;
   height: max-content;
   width: 35%;
   padding: 1rem 1rem 1.5rem 1rem;
