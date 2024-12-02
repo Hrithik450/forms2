@@ -1,35 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import styled from "styled-components";
 import Field from "./Createform.jsx/Field";
-import PopUpContent from "./Createform.jsx/PopUp";
+import UseFields from "../hooks/useFields";
 
 const InputBuilder = () => {
-  const [popUp, setPopUp] = useState(false);
-  const [fields, setfields] = useState([
-    { id: 1, label: "Name", required: true },
-  ]);
-  const [Data, setData] = useState({});
-
-  const handlePopUpOpen = (data) => {
-    setPopUp(true);
-    setData(data);
-  };
-
-  const handlePopUpClose = () => {
-    setPopUp(false);
-  };
-
-  const handleCopy = () => {
-    setfields((prev) => [...prev, { id: prev.length + 1, label: "Name" }]);
-  };
-
-  const handleDelete = (id) => {
-    setfields((prev) =>
-      prev
-        .filter((field) => field.id != id)
-        .map((field, index) => ({ ...field, id: index + 1 }))
-    );
-  };
+  const { fields } = UseFields();
 
   return (
     <Wrapper>
@@ -45,23 +20,8 @@ const InputBuilder = () => {
           </MetaData>
         </MetaDataContainer>
         <FormData>
-          {popUp && (
-            <PopUpContent
-              popUp={popUp}
-              handleDelete={handleDelete}
-              data={Data}
-              handlePopUpClose={handlePopUpClose}
-            />
-          )}
           {fields.map((field, index) => (
-            <Field
-              key={index}
-              handlePopUpOpen={handlePopUpOpen}
-              data={field}
-              handleCopy={handleCopy}
-              handleDelete={handleDelete}
-              handlePopUpClose={handlePopUpClose}
-            />
+            <Field key={index} data={field} />
           ))}
         </FormData>
       </Form>
@@ -73,6 +33,7 @@ export default InputBuilder;
 
 const Wrapper = styled.section`
   max-height: max-content;
+  position: relative;
   width: 100%;
 `;
 

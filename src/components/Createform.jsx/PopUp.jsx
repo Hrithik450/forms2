@@ -6,9 +6,20 @@ import { IoDocumentAttachOutline } from "react-icons/io5";
 import { TbLogicXnor } from "react-icons/tb";
 import { MdDelete } from "react-icons/md";
 import TypePopUpContent from "./TypePopUp";
+import ToggleButton from "./Toggle";
+import UseFields from "../../hooks/useFields";
 
-const PopUpContent = ({ popUp, handleDelete, data, handlePopUpClose }) => {
+const PopUpContent = ({
+  Type,
+  data,
+  popUp,
+  setType,
+  isToggled,
+  setisToggled,
+  handlePopUpClose,
+}) => {
   const [TypePopUp, setTypePopUp] = useState(false);
+  const { deleteField } = UseFields();
 
   const handleTypePopUpOpen = () => {
     setTypePopUp(true);
@@ -20,10 +31,11 @@ const PopUpContent = ({ popUp, handleDelete, data, handlePopUpClose }) => {
 
   return (
     <PopUp active={popUp}>
-      <BackIcon onClick={handlePopUpClose} />
+      <BackIcon onClick={() => handlePopUpClose()} />
       {TypePopUp && (
         <TypePopUpContent
-          popUp={TypePopUp}
+          setType={setType}
+          TypePopUp={TypePopUp}
           handleTypePopUpClose={handleTypePopUpClose}
         />
       )}
@@ -33,9 +45,14 @@ const PopUpContent = ({ popUp, handleDelete, data, handlePopUpClose }) => {
       </PopUpInputCont>
       <FeatContainer>
         <TypeCont onClick={handleTypePopUpOpen}>
-          <Short />
-          <ReqLabel>Short Answer</ReqLabel>
+          <ItemIcon as={Type && Type.icon} />
+          <ReqLabel>{(Type && Type.label) || "Short Answer"}</ReqLabel>
         </TypeCont>
+
+        <Required>
+          <ReqLabel>Required</ReqLabel>
+          <ToggleButton isToggled={isToggled} setisToggled={setisToggled} />
+        </Required>
       </FeatContainer>
       <PopUpBottom>
         <IconBox>
@@ -48,7 +65,7 @@ const PopUpContent = ({ popUp, handleDelete, data, handlePopUpClose }) => {
         </IconBox>
         <IconBox
           onClick={() => {
-            handleDelete(data.id);
+            deleteField({ id: data.id });
             handlePopUpClose();
           }}
         >
@@ -67,13 +84,14 @@ const PopUp = styled.div`
   background-color: white;
   position: absolute;
   left: 50%;
+  top: 50%;
   height: max-content;
   width: 35%;
   padding: 1rem 1rem 1.5rem 1rem;
   border-radius: 10px;
   margin: 2rem 0;
   z-index: 10;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
 
   animation: ${(props) => (props.active ? fadeIn : fadeOut)} 0.3s ease-in-out;
   animation-fill-mode: forwards;
@@ -112,7 +130,7 @@ const FeatContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 1.5rem 0;
+  margin: 1.5rem 1rem;
 `;
 
 const TypeCont = styled.div`
@@ -171,26 +189,26 @@ const BackIcon = styled(IoMdArrowRoundBack)`
   margin-bottom: 0.5rem;
 `;
 
-const Short = styled(MdOutlineShortText)`
+const ItemIcon = styled(MdOutlineShortText)`
   max-height: max-content;
 `;
 
 const fadeIn = keyframes`
 from {
 opacity: 0;
-transform: translateX(-50%) scale(0.8)
+ transform: translate(-50%, -50%); scale(0.8)
 } to {
 opacity: 1;
-transform: translateX(-50%) scale(1);
+ transform: translate(-50%, -50%); scale(1);
 }`;
 
 const fadeOut = keyframes`
 from {
 opacity: 1;
-transform: translateX(-50%) scale(1);
+ transform: translate(-50%, -50%); scale(1);
 } to {
  opacity: 0;
- transform: translateX(-50%) scale(0.8);
+ transform: translate(-50%, -50%); scale(0.5);
 }`;
 
 // Icons

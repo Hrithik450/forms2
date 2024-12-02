@@ -1,43 +1,69 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import ToggleButton from "./Toggle";
 import { IoIosCopy } from "react-icons/io";
 import { MdDeleteOutline } from "react-icons/md";
 import { MdOutlineShortText } from "react-icons/md";
+import PopUpContent from "./PopUp";
+import UseFields from "../../hooks/useFields";
+import UsePopUp from "../../hooks/usePopUp";
 
-const Field = ({
-  handlePopUpOpen,
-  data,
-  handleCopy,
-  handleDelete,
-  handlePopUpClose,
-}) => {
+const Field = ({ data }) => {
+  const [isToggled, setisToggled] = useState(false);
+  const [popUp, setpopUp] = useState(false);
+  const [Data, setData] = useState({});
+  const [Type, setType] = useState({});
+
+  const { addField, deleteField } = UseFields();
+
+  const handlePopUpOpen = (data) => {
+    setpopUp(true);
+    setData(data);
+  };
+
+  const handlePopUpClose = () => {
+    setpopUp(false);
+  };
+
   return (
-    <FieldContainer>
-      <Label onClick={() => handlePopUpOpen(data)}>
-        {data && data.id}. Name
-      </Label>
-      <FeatContainer>
-        <TypeCont>
-          <Short />
-          <ReqLabel>Short Answer</ReqLabel>
-        </TypeCont>
+    <>
+      {popUp && (
+        <PopUpContent
+          Type={Type}
+          data={Data}
+          popUp={popUp}
+          setType={setType}
+          isToggled={isToggled}
+          setisToggled={setisToggled}
+          handlePopUpClose={handlePopUpClose}
+        />
+      )}
 
-        <IconsCont>
-          <Copy onClick={handleCopy} />
-          <DeleteIcon
-            onClick={() => {
-              data?.id && handleDelete(data.id);
-              handlePopUpClose();
-            }}
-          />
-          <Required>
-            <ReqLabel>Required</ReqLabel>
-            <ToggleButton />
-          </Required>
-        </IconsCont>
-      </FeatContainer>
-    </FieldContainer>
+      <FieldContainer>
+        <Label onClick={() => handlePopUpOpen(data)}>
+          {data && data.id}. {data && data.label}
+        </Label>
+        <FeatContainer>
+          <TypeCont onClick={() => handlePopUpOpen(data)}>
+            <ItemIcon as={Type && Type.icon} />
+            <ReqLabel>{(Type && Type.label) || "Short Answer"}</ReqLabel>
+          </TypeCont>
+
+          <IconsCont>
+            <Copy onClick={() => addField({})} />
+            <DeleteIcon
+              onClick={() => {
+                data?.id && deleteField({ id: data.id });
+              }}
+            />
+            <Required>
+              <ReqLabel>Required</ReqLabel>
+              <ToggleButton isToggled={isToggled} setisToggled={setisToggled} />
+            </Required>
+          </IconsCont>
+        </FeatContainer>
+      </FieldContainer>
+    </>
   );
 };
 
@@ -105,7 +131,7 @@ const ReqLabel = styled.label`
 `;
 
 // Icons
-const Short = styled(MdOutlineShortText)`
+const ItemIcon = styled(MdOutlineShortText)`
   max-height: max-content;
 `;
 

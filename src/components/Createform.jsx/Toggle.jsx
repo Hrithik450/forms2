@@ -1,11 +1,8 @@
-import { useState } from "react";
 import styled from "styled-components";
 
-const ToggleButton = () => {
-  const [isToggled, setIsToggled] = useState();
-
+const ToggleButton = ({ isToggled, setisToggled }) => {
   const handleToggle = () => {
-    setIsToggled(!isToggled);
+    setisToggled(!isToggled);
   };
 
   return (
