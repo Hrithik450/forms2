@@ -1,8 +1,17 @@
 import styled from "styled-components";
+import UseFields from "../../hooks/useFields";
 
-const ToggleButton = ({ isToggled, setisToggled }) => {
+const ToggleButton = ({ field, isToggled, setisToggled }) => {
+  const { updateField } = UseFields();
+
   const handleToggle = () => {
     setisToggled(!isToggled);
+    updateField({
+      id: field.id,
+      updates: {
+        required: !isToggled,
+      },
+    });
   };
 
   return (

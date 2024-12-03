@@ -10,16 +10,15 @@ import ToggleButton from "./Toggle";
 import UseFields from "../../hooks/useFields";
 
 const PopUpContent = ({
-  Type,
-  data,
-  popUp,
-  setType,
+  popUpState,
+  setpopUpState,
   isToggled,
+  field,
   setisToggled,
   handlePopUpClose,
 }) => {
   const [TypePopUp, setTypePopUp] = useState(false);
-  const { deleteField } = UseFields();
+  const { deleteField, updateField } = UseFields();
 
   const handleTypePopUpOpen = () => {
     setTypePopUp(true);
@@ -29,29 +28,51 @@ const PopUpContent = ({
     setTypePopUp(false);
   };
 
+  const handleChange = (e) => {
+    updateField({
+      id: field.id,
+      updates: {
+        label: e.target.value,
+      },
+    });
+  };
+
   return (
-    <PopUp active={popUp}>
+    <PopUp active={popUpState.isOpen}>
       <BackIcon onClick={() => handlePopUpClose()} />
       {TypePopUp && (
         <TypePopUpContent
-          setType={setType}
+          field={field}
+          setpopUpState={setpopUpState}
           TypePopUp={TypePopUp}
           handleTypePopUpClose={handleTypePopUpClose}
         />
       )}
       <PopUpInputCont>
-        <Label>{data && data.id}.</Label>
-        <FieldInput type="text" placeholder="Question" />
+        <Label>{popUpState.Data && popUpState.Data.id}.</Label>
+        <FieldInput
+          type="text"
+          name={field.name}
+          placeholder="Question"
+          onChange={handleChange}
+          value={field && field.label}
+        />
       </PopUpInputCont>
       <FeatContainer>
         <TypeCont onClick={handleTypePopUpOpen}>
-          <ItemIcon as={Type && Type.icon} />
-          <ReqLabel>{(Type && Type.label) || "Short Answer"}</ReqLabel>
+          <ItemIcon as={popUpState.Type && popUpState.Type.icon} />
+          <ReqLabel>
+            {(popUpState.Type && popUpState.Type.label) || "Short Answer"}
+          </ReqLabel>
         </TypeCont>
 
         <Required>
           <ReqLabel>Required</ReqLabel>
-          <ToggleButton isToggled={isToggled} setisToggled={setisToggled} />
+          <ToggleButton
+            field={field}
+            isToggled={isToggled}
+            setisToggled={setisToggled}
+          />
         </Required>
       </FeatContainer>
       <PopUpBottom>
@@ -65,7 +86,7 @@ const PopUpContent = ({
         </IconBox>
         <IconBox
           onClick={() => {
-            deleteField({ id: data.id });
+            deleteField({ id: field.id });
             handlePopUpClose();
           }}
         >
@@ -84,7 +105,7 @@ const PopUp = styled.div`
   background-color: white;
   position: absolute;
   left: 50%;
-  top: 40%;
+  top: 50%;
   height: max-content;
   width: 35%;
   padding: 1rem 1rem 1.5rem 1rem;

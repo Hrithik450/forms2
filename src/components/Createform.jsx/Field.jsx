@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import ToggleButton from "./Toggle";
 import { IoIosCopy } from "react-icons/io";
@@ -6,59 +6,71 @@ import { MdDeleteOutline } from "react-icons/md";
 import { MdOutlineShortText } from "react-icons/md";
 import PopUpContent from "./PopUp";
 import UseFields from "../../hooks/useFields";
-import UsePopUp from "../../hooks/usePopUp";
 
-const Field = ({ data }) => {
+const Field = ({ field }) => {
   const [isToggled, setisToggled] = useState(false);
-  const [popUp, setpopUp] = useState(false);
-  const [Data, setData] = useState({});
-  const [Type, setType] = useState({});
+  const [popUpState, setpopUpState] = useState({
+    isOpen: false,
+    Data: null,
+    Type: null,
+  });
 
   const { addField, deleteField } = UseFields();
 
   const handlePopUpOpen = (data) => {
-    setpopUp(true);
-    setData(data);
+    setpopUpState((prev) => ({
+      ...prev,
+      isOpen: true,
+      Data: data,
+    }));
   };
 
   const handlePopUpClose = () => {
-    setpopUp(false);
+    setpopUpState((prev) => ({
+      ...prev,
+      isOpen: false,
+    }));
   };
 
   return (
     <>
-      {popUp && (
+      {popUpState.isOpen && (
         <PopUpContent
-          Type={Type}
-          data={Data}
-          popUp={popUp}
-          setType={setType}
+          popUpState={popUpState}
+          setpopUpState={setpopUpState}
           isToggled={isToggled}
+          field={field}
           setisToggled={setisToggled}
           handlePopUpClose={handlePopUpClose}
         />
       )}
 
       <FieldContainer>
-        <Label onClick={() => handlePopUpOpen(data)}>
-          {data && data.id}. {data && data.label}
+        <Label onClick={() => handlePopUpOpen(field)}>
+          {field && field.id}.{field && field.label}
         </Label>
         <FeatContainer>
-          <TypeCont onClick={() => handlePopUpOpen(data)}>
-            <ItemIcon as={Type && Type.icon} />
-            <ReqLabel>{(Type && Type.label) || "Short Answer"}</ReqLabel>
+          <TypeCont onClick={() => handlePopUpOpen(field)}>
+            <ItemIcon as={popUpState.Type && popUpState.Type.icon} />
+            <ReqLabel>
+              {(popUpState.Type && popUpState.Type.label) || "Short Answer"}
+            </ReqLabel>
           </TypeCont>
 
           <IconsCont>
-            <Copy onClick={() => addField({})} />
+            <Copy onClick={() => addField({ id: field.id })} />
             <DeleteIcon
               onClick={() => {
-                data?.id && deleteField({ id: data.id });
+                field?.id && deleteField({ id: field.id });
               }}
             />
             <Required>
               <ReqLabel>Required</ReqLabel>
-              <ToggleButton isToggled={isToggled} setisToggled={setisToggled} />
+              <ToggleButton
+                field={field}
+                isToggled={isToggled}
+                setisToggled={setisToggled}
+              />
             </Required>
           </IconsCont>
         </FeatContainer>

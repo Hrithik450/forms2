@@ -7,7 +7,7 @@ import { MdEmail } from "react-icons/md";
 import { ImListNumbered } from "react-icons/im";
 import { IoCalendarNumberSharp } from "react-icons/io5";
 import { FaFile } from "react-icons/fa";
-import UsePopUp from "../../hooks/usePopUp";
+import UseFields from "../../hooks/useFields";
 
 const Types = [
   {
@@ -36,8 +36,22 @@ const Types = [
   },
 ];
 
-const TypePopUpContent = ({ setType, TypePopUp, handleTypePopUpClose }) => {
-  const { handleField } = UsePopUp();
+const TypesMapping = {
+  "Short Answer": "text",
+  "Long Answer": "text",
+  Email: "email",
+  Number: "number",
+  Date: "date",
+  file: "file",
+};
+
+const TypePopUpContent = ({
+  field,
+  setpopUpState,
+  TypePopUp,
+  handleTypePopUpClose,
+}) => {
+  const { updateField } = UseFields();
 
   return (
     <PopUp active={TypePopUp}>
@@ -46,7 +60,14 @@ const TypePopUpContent = ({ setType, TypePopUp, handleTypePopUpClose }) => {
         <ItemContainer
           key={type.icon}
           onClick={() => {
-            setType(type);
+            setpopUpState((prev) => ({
+              ...prev,
+              Type: type,
+            }));
+            updateField({
+              id: field.id,
+              updates: { type: TypesMapping[type.label] },
+            });
             handleTypePopUpClose();
           }}
         >

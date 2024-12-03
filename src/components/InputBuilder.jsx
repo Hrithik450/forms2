@@ -1,28 +1,98 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { addDoc, collection } from "firebase/firestore";
 import styled from "styled-components";
 import Field from "./Createform.jsx/Field";
 import UseFields from "../hooks/useFields";
+import useMeta from "../hooks/useMeta";
+import DotSpinner from "./Spinner_1";
+import db from "../Config/Firebase";
 
 const InputBuilder = () => {
+  const [Meta, setMeta] = useState({});
+  const [alert, setalert] = useState([]);
+  const [spinner, setspinner] = useState(false);
   const { fields } = UseFields();
+  const { Title, Description, updateMeta } = useMeta();
+
+  useEffect(() => {
+    if (alert.length > 0) {
+      const timer = setTimeout(() => {
+        setalert((prev) => prev.slice(1));
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [alert]);
+
+  const showAlert = (alert) => {
+    setalert((prev) => [...prev, alert]);
+  };
+
+  const handleChange = (e) => {
+    setMeta((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+
+    updateMeta({ title: Meta?.title, description: Meta?.description });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setspinner(true);
+
+    try {
+      const docRef = await addDoc(collection(db, "formFormats"), {
+        fields: fields,
+        Title: Title,
+        Description: Description,
+      });
+
+      showAlert({ type: "success", msg: "Form successfully created!" });
+      setspinner(false);
+    } catch (error) {
+      console.log(error);
+      showAlert({ type: "danger", msg: "Error submitting the form!" });
+      setspinner(false);
+    }
+  };
 
   return (
     <Wrapper>
-      <Form>
+      <Form onSubmit={handleSubmit}>
         <MetaDataContainer>
           <MetaData>
-            <Input type="text" placeholder="" />
+            <Input
+              name="title"
+              type="text"
+              placeholder=""
+              onChange={handleChange}
+            />
             <MetaLabel>Title</MetaLabel>
           </MetaData>
           <MetaData>
-            <Input type="text" placeholder="" />
+            <Input
+              name="description"
+              type="text"
+              placeholder=""
+              onChange={handleChange}
+            />
             <MetaLabel>Description</MetaLabel>
           </MetaData>
         </MetaDataContainer>
         <FormData>
           {fields.map((field, index) => (
-            <Field key={index} data={field} />
+            <Field key={index} field={field} />
           ))}
+
+          {alert.length > 0 && (
+            <div className={`alert alert-${alert[0].type}`} role="alert">
+              {alert[0].msg}
+            </div>
+          )}
+
+          <Button type="submit" spinner={spinner}>
+            {spinner ? <DotSpinner /> : "Submit"}
+          </Button>
         </FormData>
       </Form>
     </Wrapper>
@@ -112,6 +182,12 @@ const Input = styled.input`
   }
 `;
 
-// Animations
-
-// Icons
+const Button = styled.button`
+  background-color: cyan;
+  max-height: max-content;
+  border-radius: 10px;
+  margin-bottom: 2rem;
+  font-weight: bold;
+  padding: ${(props) => (props.spinner ? "1rem" : "0.5rem")};
+  width: 100%;
+`;

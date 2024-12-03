@@ -1,10 +1,10 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import fieldsReducer from "./Slices/FieldSlice";
-import PopUpReducer from "./Slices/PopupSlice";
+import MetaReducer from "./Slices/MetaData";
 
 const reducer = combineReducers({
   fields: fieldsReducer,
-  PopUp: PopUpReducer,
+  MetaData: MetaReducer,
 });
 
 const Store = configureStore({ reducer });
