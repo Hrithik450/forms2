@@ -3,7 +3,6 @@ import { addDoc, collection } from "firebase/firestore";
 import styled from "styled-components";
 import Field from "./Createform.jsx/Field";
 import UseFields from "../hooks/useFields";
-import useMeta from "../hooks/useMeta";
 import DotSpinner from "./Spinner_1";
 import db from "../Config/Firebase";
 
@@ -12,7 +11,6 @@ const InputBuilder = () => {
   const [alert, setalert] = useState([]);
   const [spinner, setspinner] = useState(false);
   const { fields } = UseFields();
-  const { Title, Description, updateMeta } = useMeta();
 
   useEffect(() => {
     if (alert.length > 0) {
@@ -32,8 +30,6 @@ const InputBuilder = () => {
       ...prev,
       [e.target.name]: e.target.value,
     }));
-
-    updateMeta({ title: Meta?.title, description: Meta?.description });
   };
 
   const handleSubmit = async (e) => {
@@ -43,8 +39,8 @@ const InputBuilder = () => {
     try {
       const docRef = await addDoc(collection(db, "formFormats"), {
         fields: fields,
-        Title: Title,
-        Description: Description,
+        Title: Meta.title,
+        Description: Meta.description,
       });
 
       showAlert({ type: "success", msg: "Form successfully created!" });
