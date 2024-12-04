@@ -62,6 +62,7 @@ const InputBuilder = () => {
               type="text"
               placeholder=""
               onChange={handleChange}
+              required
             />
             <MetaLabel>Title</MetaLabel>
           </MetaData>
@@ -71,6 +72,7 @@ const InputBuilder = () => {
               type="text"
               placeholder=""
               onChange={handleChange}
+              required
             />
             <MetaLabel>Description</MetaLabel>
           </MetaData>

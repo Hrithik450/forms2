@@ -2,7 +2,13 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   fields: [
-    { id: 1, label: "Name", name: "Name", type: "text", required: false },
+    {
+      id: 1,
+      label: "Name",
+      name: "Name",
+      type: "text",
+      required: false,
+    },
     {
       id: 2,
       label: "Date of Birth",
@@ -17,7 +23,13 @@ const initialState = {
       type: "number",
       required: false,
     },
-    { id: 4, label: "Email", name: "email", type: "email", required: false },
+    {
+      id: 4,
+      label: "Email",
+      name: "email",
+      type: "email",
+      required: false,
+    },
   ],
 };
 

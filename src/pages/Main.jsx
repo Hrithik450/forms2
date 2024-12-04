@@ -10,6 +10,9 @@ const Main = () => {
       <button>
         <Link to="/create-form">Create Form</Link>
       </button>
+      <button>
+        <Link to="/view-forms">Forms</Link>
+      </button>
     </div>
   );
 };

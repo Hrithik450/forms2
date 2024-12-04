@@ -1,11 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
-import { collection, addDoc } from "firebase/firestore";
+import { collection, addDoc, doc, getDoc } from "firebase/firestore";
+import { useParams } from "react-router-dom";
 import { styled } from "styled-components";
-import { FormFields } from "./DataArray";
 import DotSpinner from "./Spinner_1";
+import db from "../Config/Firebase";
 import SubForm from "./SubForm";
 import axios from "axios";
-import db from "../Config/Firebase";
 
 const Formbuilder = () => {
   const [formState, setformState] = useState({});
@@ -13,9 +13,35 @@ const Formbuilder = () => {
   const [preview, setpreview] = useState(null);
   const [alert, setalert] = useState([]);
   const [loading, setloading] = useState(false);
+  const [loading1, setloading1] = useState(false);
   const [clearEntries, setclearEntries] = useState(false);
   const [clearFile, setclearFile] = useState(false);
   const fileInputRef = useRef(null);
+
+  const [formDetails, setformDetails] = useState([]);
+  const { id } = useParams();
+
+  useEffect(() => {
+    setloading1(true);
+    const fetchForm = async () => {
+      try {
+        const docRef = doc(db, "formFormats", id);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          setloading1(false);
+          setformDetails(docSnap.data());
+        } else {
+          setloading1(false);
+          console.log("No such document!");
+        }
+      } catch (error) {
+        console.log("Error fetching form:", error);
+      }
+    };
+
+    if (id) fetchForm();
+  }, [id]);
 
   useEffect(() => {
     if (fileInputRef && fileInputRef.current) {
@@ -117,133 +143,149 @@ const Formbuilder = () => {
     };
     reader.readAsDataURL(file);
   };
-
+  // Department Data Collection for UVCE Website\ for UVCE Website<A href="www.uvce.ac.in">www.uvce.ac.in</A>
   return (
     <Wrapper>
       <Form onSubmit={handleSubmit}>
-        <Hero>
-          <H1>Department Data Collection for UVCE Website</H1>
-          <P>
-            for UVCE Website<A href="www.uvce.ac.in">www.uvce.ac.in</A>
-          </P>
-          {FormFields.map((field, index) => {
-            if (field.type === "file") {
-              return (
-                <FieldContainer key={index}>
-                  <Label>{field.label}</Label>
-                  {preview && <Image src={preview} alt="Preview" />}
-                  <Input
-                    name={field.name}
-                    ref={fileInputRef}
-                    type={field.type}
-                    accept="image/*"
-                    onChange={handleImageChange}
-                  />
-                  {field.required && <ReqLabel>required</ReqLabel>}
-                </FieldContainer>
-              );
-            }
+        {loading1 ? (
+          <DotSpinner />
+        ) : (
+          <>
+            <H1>{formDetails && formDetails.Title}</H1>
+            <P>{formDetails && formDetails.Description}</P>
+            {formDetails &&
+              formDetails.fields &&
+              formDetails.fields.map((field, index) => {
+                if (field.type === "file") {
+                  return (
+                    <FieldContainer key={index}>
+                      <Label>
+                        {field.id}. {field.label}
+                      </Label>
+                      {preview && <Image src={preview} alt="Preview" />}
+                      <Input
+                        name={field.name}
+                        ref={fileInputRef}
+                        type={field.type}
+                        accept="image/*"
+                        onChange={handleImageChange}
+                      />
+                      {field.required && <ReqLabel>required</ReqLabel>}
+                    </FieldContainer>
+                  );
+                }
 
-            if (field.type === "radio") {
-              return (
-                <FieldContainer key={index}>
-                  <Label>{field.label}</Label>
-                  <RadioWrapper>
-                    {field.options &&
-                      field.options.map((option, OptionIndex) => (
-                        <RadioInputBox key={OptionIndex}>
-                          <RadioInput
-                            type={field.type}
-                            name={field.name}
-                            value={option}
-                            onChange={(e) => handleChange(e, field)}
-                            checked={option === formState[field.name]}
-                            required={field.required}
-                          />
-                          <RadioLabel htmlFor={option}>{option}</RadioLabel>
-                        </RadioInputBox>
-                      ))}
-                  </RadioWrapper>
-                  {field.required && <ReqLabel>required</ReqLabel>}
-                </FieldContainer>
-              );
-            }
+                if (field.type === "radio") {
+                  return (
+                    <FieldContainer key={index}>
+                      <Label>
+                        {field.id}. {field.label}
+                      </Label>
+                      <RadioWrapper>
+                        {field.options &&
+                          field.options.map((option, OptionIndex) => (
+                            <RadioInputBox key={OptionIndex}>
+                              <RadioInput
+                                type={field.type}
+                                name={field.name}
+                                value={option}
+                                onChange={(e) => handleChange(e, field)}
+                                checked={option === formState[field.name]}
+                                required={field.required}
+                              />
+                              <RadioLabel htmlFor={option}>{option}</RadioLabel>
+                            </RadioInputBox>
+                          ))}
+                      </RadioWrapper>
+                      {field.required && <ReqLabel>required</ReqLabel>}
+                    </FieldContainer>
+                  );
+                }
 
-            if (field.type === "select") {
-              return (
-                <FieldContainer key={index}>
-                  <Label>{field.label}</Label>
-                  <Select
-                    id={field.name}
-                    name={field.name}
-                    value={(formState && formState[field.name]) || ""}
-                    onChange={(e) => handleChange(e, field)}
-                  >
-                    <Option value="">Select {field.name}</Option>
-                    {field.options.map((option, index) => (
-                      <Option key={index} value={option}>
-                        {option}
-                      </Option>
-                    ))}
-                  </Select>
-                </FieldContainer>
-              );
-            }
+                if (field.type === "select") {
+                  return (
+                    <FieldContainer key={index}>
+                      <Label>
+                        {field.id}. {field.label}
+                      </Label>
+                      <Select
+                        id={field.name}
+                        name={field.name}
+                        value={(formState && formState[field.name]) || ""}
+                        onChange={(e) => handleChange(e, field)}
+                      >
+                        <Option value="">Select {field.name}</Option>
+                        {field.options.map((option, index) => (
+                          <Option key={index} value={option}>
+                            {option}
+                          </Option>
+                        ))}
+                      </Select>
+                    </FieldContainer>
+                  );
+                }
 
-            if (field.type === "textarea") {
-              return (
-                <FieldContainer key={index}>
-                  <Label>{field.label}</Label>
-                  <Desc
-                    name={field.name}
-                    placeholder={field.placeholder}
-                    value={(formState && formState[field.name]) || ""}
-                    onChange={(e) => handleChange(e, field)}
-                    spellCheck="true"
-                    required={field.required}
-                  />
-                  {field.required && <ReqLabel>required</ReqLabel>}
-                </FieldContainer>
-              );
-            }
+                if (field.type === "textarea") {
+                  return (
+                    <FieldContainer key={index}>
+                      <Label>
+                        {field.id}. {field.label}
+                      </Label>
+                      <Desc
+                        name={field.name}
+                        placeholder={field.placeholder}
+                        value={(formState && formState[field.name]) || ""}
+                        onChange={(e) => handleChange(e, field)}
+                        spellCheck="true"
+                        required={field.required}
+                      />
+                      {field.required && <ReqLabel>required</ReqLabel>}
+                    </FieldContainer>
+                  );
+                }
 
-            if (field.type === "subform") {
-              return (
-                <FieldContainer key={index}>
-                  <Label>{field.label}</Label>
-                  <SubForm
-                    formFields={field.fields}
-                    onchange={(data) => HandleChange(field.name, data)}
-                    clearEntries={clearEntries}
-                  />
-                </FieldContainer>
-              );
-            }
+                if (field.type === "subform") {
+                  return (
+                    <FieldContainer key={index}>
+                      <Label>
+                        {field.id}. {field.label}
+                      </Label>
+                      <SubForm
+                        formFields={field.fields}
+                        onchange={(data) => HandleChange(field.name, data)}
+                        clearEntries={clearEntries}
+                      />
+                    </FieldContainer>
+                  );
+                }
 
-            return (
-              <FieldContainer key={index}>
-                <Label>{field.label}</Label>
-                <Input
-                  type={field.type}
-                  name={field.name}
-                  placeholder={field.placeholder}
-                  value={(formState && formState[field.name]) || ""}
-                  onChange={(e) => handleChange(e, field)}
-                  required={field.required}
-                />
-                {field.required && <ReqLabel>required</ReqLabel>}
-              </FieldContainer>
-            );
-          })}
+                return (
+                  <FieldContainer key={index}>
+                    <Label>
+                      {field.id}. {field.label}
+                    </Label>
+                    <Input
+                      type={field.type}
+                      name={field.name}
+                      placeholder={field.placeholder}
+                      value={(formState && formState[field.name]) || ""}
+                      onChange={(e) => handleChange(e, field)}
+                      required={field.required}
+                    />
+                    {field.required && <ReqLabel>required</ReqLabel>}
+                  </FieldContainer>
+                );
+              })}
 
-          {alert.length > 0 && (
-            <div className={`alert alert-${alert[0].type}`} role="alert">
-              {alert[0].msg}
-            </div>
-          )}
+            {alert.length > 0 && (
+              <div className={`alert alert-${alert[0].type}`} role="alert">
+                {alert[0].msg}
+              </div>
+            )}
 
-          <Button type="submit">{loading ? <DotSpinner /> : "Submit"}</Button>
-        </Hero>
+            <Button type="submit">{loading ? <DotSpinner /> : "Submit"}</Button>
+          </>
+        )}
       </Form>
     </Wrapper>
   );
@@ -280,10 +322,6 @@ const FieldContainer = styled.div`
   @media (max-width: 450px) {
     margin: 1.5rem 0;
   }
-`;
-
-const Hero = styled.div`
-  max-height: max-content;
 `;
 
 const H1 = styled.h1`

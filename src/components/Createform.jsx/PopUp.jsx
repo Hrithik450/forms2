@@ -29,10 +29,12 @@ const PopUpContent = ({
   };
 
   const handleChange = (e) => {
+    const name = e.target.value.replace(/\s+/g, "");
     updateField({
       id: field.id,
       updates: {
         label: e.target.value,
+        name: name,
       },
     });
   };

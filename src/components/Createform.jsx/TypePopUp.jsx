@@ -38,7 +38,7 @@ const Types = [
 
 const TypesMapping = {
   "Short Answer": "text",
-  "Long Answer": "text",
+  "Long Answer": "textarea",
   Email: "email",
   Number: "number",
   Date: "date",
